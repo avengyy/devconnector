@@ -10,8 +10,7 @@ class Login extends Component {
     this.state = {
       email: '',
       password: '',
-      errors: {},
-      prevProps: []
+      errors: {}
     };
 
     this.onChangeHandler = this.onChangeHandler.bind(this);
