@@ -3,7 +3,10 @@ const { mongoURI } = require('./index');
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(mongoURI, { useNewUrlParser: true });
+    await mongoose.connect(mongoURI, {
+      useNewUrlParser: true,
+      useCreateIndex: true
+    });
 
     console.log('MongoDB Connected');
   } catch (error) {
