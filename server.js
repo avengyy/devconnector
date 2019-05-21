@@ -1,10 +1,6 @@
 const express = require('express');
 const connectDB = require('./config/db');
-const {
-  logErrors,
-  clientErrorHandler,
-  errorHandler
-} = require('./middlewares');
+const { logErrors, clientErrorHandler, errorHandler } = require('./middleware');
 const app = express();
 
 // Connect Database

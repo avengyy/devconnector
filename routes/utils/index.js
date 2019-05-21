@@ -1,5 +1,3 @@
-const { Request, Response, NextFunction } = require('express');
-
 /**
  * Send success response
  * @param {*} data
@@ -22,7 +20,19 @@ const sendFailure = (data, res) =>
     data
   });
 
+/**
+ * Send failure response
+ * @param {*} data
+ * @param {Response} res
+ */
+const sendAuthFailure = (data, res) =>
+  res.status(401).json({
+    status: 'fail',
+    data
+  });
+
 module.exports = {
+  sendAuthFailure,
   sendFailure,
   sendSuccess
 };
