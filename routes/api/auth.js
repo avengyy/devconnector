@@ -1,30 +1,39 @@
 const express = require('express');
 const router = express.Router();
-const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator/check');
+const { auth } = require('../../middleware');
 const { sendSuccess, sendFailure } = require('../utils');
 const { jwtSecret } = require('../../config');
 
 const User = require('../../models/User');
 
 /**
- * @route POST api/users
- * @description Register user
+ * @route GET api/auth
+ * @description Test Route
+ * @access Public
+ */
+router.get('/', auth, async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+
+    sendSuccess(res, user);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * @route POST api/auth
+ * @description Authenticate user and get access token
  * @access Public
  */
 router.post(
   '/',
   [
-    check('name', 'Name is required')
-      .not()
-      .isEmpty(),
     check('email', 'Please include a valid email').isEmail(),
-    check(
-      'password',
-      'Please enter a password with 6 or more characters'
-    ).isLength({ min: 6 })
+    check('password', 'Password is required').exists()
   ],
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -33,37 +42,21 @@ router.post(
       return sendFailure(res, errors.array());
     }
 
-    const { name, email, password } = req.body;
+    const { email, password } = req.body;
 
     try {
-      // 1. Check if user exist
-      let user = await User.findOne({ email });
+      const user = await User.findOne({ email });
 
-      if (user) {
-        return sendFailure(res, [{ msg: 'User already exists' }]);
+      if (!user) {
+        return sendFailure(res, [{ msg: 'Invalid Credentials' }]);
       }
 
-      // 2. Get user avatar
-      const avatar = gravatar.url(email, {
-        s: '200',
-        r: 'pg',
-        d: 'mm'
-      });
+      const isMatch = await bcrypt.compare(password, user.password);
 
-      user = new User({
-        name,
-        email,
-        avatar,
-        password
-      });
+      if (!isMatch) {
+        return sendFailure(res, [{ msg: 'Invalid Credentials' }]);
+      }
 
-      // 3. Hash password
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
-
-      await user.save();
-
-      // 4. Return access token
       const payload = {
         user: {
           id: user.id
