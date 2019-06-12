@@ -13,7 +13,7 @@ const auth = (req, res, next) => {
 
   // 2. Check if no token
   if (!token) {
-    return sendAuthFailure({ msg: 'Unauthorized' }, res);
+    return sendAuthFailure(res, { msg: 'Unauthorized' });
   }
 
   // 3. Verify token
@@ -24,7 +24,7 @@ const auth = (req, res, next) => {
 
     next();
   } catch (error) {
-    return sendAuthFailure({ msg: 'Token is not valid' }, res);
+    return sendAuthFailure(res, { msg: 'Token is not valid' });
   }
 };
 
