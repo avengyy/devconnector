@@ -18,7 +18,7 @@ router.get('/', auth, async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
 
-    sendSuccess(user, res);
+    sendSuccess(res, user);
   } catch (error) {
     next(error);
   }
@@ -39,7 +39,7 @@ router.post(
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      return sendFailure(errors.array(), res);
+      return sendFailure(res, errors.array());
     }
 
     const { email, password } = req.body;
@@ -48,13 +48,13 @@ router.post(
       const user = await User.findOne({ email });
 
       if (!user) {
-        return sendFailure([{ msg: 'Invalid Credentials' }], res);
+        return sendFailure(res, [{ msg: 'Invalid Credentials' }]);
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
-        return sendFailure([{ msg: 'Invalid Credentials' }], res);
+        return sendFailure(res, [{ msg: 'Invalid Credentials' }]);
       }
 
       const payload = {
@@ -66,7 +66,7 @@ router.post(
       jwt.sign(payload, jwtSecret, { expiresIn: 3600 * 100 }, (err, token) => {
         if (err) throw err;
 
-        return sendSuccess({ token }, res);
+        return sendSuccess(res, { token });
       });
     } catch (error) {
       next(error);

@@ -2,8 +2,7 @@ const jwt = require('jsonwebtoken');
 const { sendAuthFailure } = require('../routes/utils');
 
 /**
- * Log errors
- * @param {*} err
+ * Authenticate
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next

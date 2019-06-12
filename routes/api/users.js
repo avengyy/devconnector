@@ -30,7 +30,7 @@ router.post(
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      return sendFailure(errors.array(), res);
+      return sendFailure(res, errors.array());
     }
 
     const { name, email, password } = req.body;
@@ -40,7 +40,7 @@ router.post(
       let user = await User.findOne({ email });
 
       if (user) {
-        return sendFailure([{ msg: 'User already exists' }], res);
+        return sendFailure(res, [{ msg: 'User already exists' }]);
       }
 
       // 2. Get user avatar
@@ -73,7 +73,7 @@ router.post(
       jwt.sign(payload, jwtSecret, { expiresIn: 3600 * 100 }, (err, token) => {
         if (err) throw err;
 
-        return sendSuccess({ token }, res);
+        return sendSuccess(res, { token });
       });
     } catch (error) {
       next(error);

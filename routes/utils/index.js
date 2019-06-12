@@ -1,9 +1,9 @@
 /**
  * Send success response
- * @param {*} data
- *  @param {Response} res
+ * @param {Object} data
+ * @param {Response} res
  */
-const sendSuccess = (data, res) =>
+const sendSuccess = (res, data) =>
   res.status(200).json({
     status: 'success',
     data
@@ -11,24 +11,24 @@ const sendSuccess = (data, res) =>
 
 /**
  * Send failure response
- * @param {*} data
+ * @param {Object} data
  * @param {Response} res
  */
-const sendFailure = (data, res) =>
+const sendFailure = (res, error) =>
   res.status(400).json({
     status: 'fail',
-    data
+    error
   });
 
 /**
  * Send failure response
- * @param {*} data
+ * @param {Object} data
  * @param {Response} res
  */
-const sendAuthFailure = (data, res) =>
+const sendAuthFailure = (res, error) =>
   res.status(401).json({
     status: 'fail',
-    data
+    error
   });
 
 module.exports = {
