@@ -1,11 +1,12 @@
+const express = require('express');
 const jwt = require('jsonwebtoken');
 const { sendAuthFailure } = require('../routes/utils');
 
 /**
  * Authenticate
- * @param {Request} req
- * @param {Response} res
- * @param {NextFunction} next
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @param {express.NextFunction} next
  */
 const auth = (req, res, next) => {
   // 1. Get token from header
@@ -43,9 +44,9 @@ const logErrors = (err, _req, _res, next) => {
 /**
  * Send client errors
  * @param {*} err
- * @param {Request} req
- * @param {Response} res
- * @param {NextFunction} next
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @param {express.NextFunction} next
  */
 const clientErrorHandler = (err, req, res, next) => {
   if (req.xhr) {
@@ -58,9 +59,9 @@ const clientErrorHandler = (err, req, res, next) => {
 /**
  * Send error reponse
  * @param {*} err
- * @param {Request} req
- * @param {Response} res
- * @param {NextFunction} next
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @param {express.NextFunction} next
  */
 const errorHandler = (err, _req, res, _next) => {
   res.status(500);
