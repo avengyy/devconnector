@@ -25,7 +25,7 @@ router.get('/me', auth, async (req, res) => {
 
     sendSuccess(res, profile);
   } catch (error) {
-    next(error.message);
+    next(error);
   }
 });
 
@@ -114,7 +114,7 @@ router.post(
       sendSuccess(res, profile);
     } catch (error) {
       console.error(error.message);
-      next(error.message);
+      next(error);
     }
   }
 );
@@ -130,7 +130,7 @@ router.get('/', async (req, res, next) => {
 
     sendSuccess(res, profiles);
   } catch (error) {
-    next(error.message);
+    next(error);
   }
 });
 
@@ -154,7 +154,7 @@ router.get('/user/:user_id', async (req, res, next) => {
     if (error.kind === 'ObjectId') {
       return sendFailure(res, [{ msg: 'Profile not found' }]);
     } else {
-      next(error.message);
+      next(error);
     }
   }
 });
@@ -175,7 +175,7 @@ router.delete('/', auth, async (req, res, next) => {
 
     sendSuccess(res, { msg: 'User deleted' });
   } catch (error) {
-    next(error.message);
+    next(error);
   }
 });
 
@@ -236,9 +236,33 @@ router.put(
 
       sendSuccess(res, profile);
     } catch (error) {
-      next(error.message);
+      next(error);
     }
   }
 );
+
+/**
+ * @route DELETE api/profile/experience/:exp_id
+ * @description Delete profile experience
+ * @access Private
+ */
+router.delete('/experience/:exp_id', auth, async (req, res, next) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    // Get remove index
+    const removeIndex = profile.experience
+      .map(item => item.id)
+      .indexOf(req.params.exp_id);
+
+    profile.experience.splice(removeIndex, 1);
+
+    await profile.save();
+
+    sendSuccess(res, profile);
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
