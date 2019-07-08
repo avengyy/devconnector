@@ -25,7 +25,7 @@ router.get('/me', auth, async (req, res) => {
 
     sendSuccess(res, profile);
   } catch (error) {
-    next(error);
+    next(error.message);
   }
 });
 
@@ -114,7 +114,7 @@ router.post(
       sendSuccess(res, profile);
     } catch (error) {
       console.error(error.message);
-      next(error);
+      next(error.message);
     }
   }
 );
@@ -130,7 +130,7 @@ router.get('/', async (req, res, next) => {
 
     sendSuccess(res, profiles);
   } catch (error) {
-    next(error);
+    next(error.message);
   }
 });
 
@@ -154,7 +154,7 @@ router.get('/user/:user_id', async (req, res, next) => {
     if (error.kind === 'ObjectId') {
       return sendFailure(res, [{ msg: 'Profile not found' }]);
     } else {
-      next(error);
+      next(error.message);
     }
   }
 });
@@ -175,8 +175,70 @@ router.delete('/', auth, async (req, res, next) => {
 
     sendSuccess(res, { msg: 'User deleted' });
   } catch (error) {
-    next(error);
+    next(error.message);
   }
 });
+
+/**
+ * @route PUT api/profile/experience
+ * @description Add profile experience
+ * @access Private
+ */
+router.put(
+  '/experience',
+  [
+    auth,
+    [
+      check('title', 'Title is required')
+        .not()
+        .isEmpty(),
+      check('company', 'Company is required')
+        .not()
+        .isEmpty(),
+      check('from', 'From date is required')
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return sendFailure(res, errors.array());
+    }
+
+    const {
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description
+    } = req.body;
+
+    const newExp = {
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description
+    };
+
+    try {
+      const profile = await Profile.findOne({ user: req.user.id });
+
+      profile.experience.unshift(newExp);
+
+      await profile.save();
+
+      sendSuccess(res, profile);
+    } catch (error) {
+      next(error.message);
+    }
+  }
+);
 
 module.exports = router;
