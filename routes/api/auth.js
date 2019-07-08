@@ -20,7 +20,7 @@ router.get('/', auth, async (req, res, next) => {
 
     sendSuccess(res, user);
   } catch (error) {
-    next(error);
+    next(error.message);
   }
 });
 
@@ -69,7 +69,7 @@ router.post(
         return sendSuccess(res, { token });
       });
     } catch (error) {
-      next(error);
+      next(error.message);
     }
   }
 );
