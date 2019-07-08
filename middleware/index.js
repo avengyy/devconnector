@@ -37,7 +37,8 @@ const auth = (req, res, next) => {
  * @param {NextFunction} next
  */
 const logErrors = (err, _req, _res, next) => {
-  console.error(err.stack);
+  if (err.message) console.error(err.message);
+  if (err.stack) console.error(err.stack);
   next(err);
 };
 
@@ -65,7 +66,7 @@ const clientErrorHandler = (err, req, res, next) => {
  */
 const errorHandler = (err, _req, res, _next) => {
   res.status(500);
-  res.send('error', { error: err });
+  res.send('Server Error');
 };
 
 module.exports = {

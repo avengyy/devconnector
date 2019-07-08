@@ -76,7 +76,7 @@ router.post(
         return sendSuccess(res, { token });
       });
     } catch (error) {
-      next(error.message);
+      next(error);
     }
   }
 );
