@@ -40,9 +40,9 @@ router.post(
         user: req.user.id
       });
 
-      const post = await newPost.save();
+      const posts = await newPost.save();
 
-      sendSuccess(res, post);
+      sendSuccess(res, posts);
     } catch (error) {
       next(error);
     }
