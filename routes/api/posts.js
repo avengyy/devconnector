@@ -65,4 +65,27 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+/**
+ * @route GET api/posts/:id
+ * @description Get post by id
+ * @access Private
+ */
+router.get('/:id', auth, async (req, res) => {
+  try {
+    // Find post by id and sort by most recent
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return sendFailure(res, { msg: 'Post not found' });
+    }
+
+    sendSuccess(res, post);
+  } catch (error) {
+    if (error.kind === 'ObjectId') {
+      return sendFailure(res, { msg: 'Post not found' });
+    }
+    next(error);
+  }
+});
+
 module.exports = router;
