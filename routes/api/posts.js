@@ -40,13 +40,29 @@ router.post(
         user: req.user.id
       });
 
-      const posts = await newPost.save();
+      const post = await newPost.save();
 
-      sendSuccess(res, posts);
+      sendSuccess(res, post);
     } catch (error) {
       next(error);
     }
   }
 );
+
+/**
+ * @route GET api/posts
+ * @description Get all post
+ * @access Private
+ */
+router.get('/', auth, async (req, res) => {
+  try {
+    // Find posts and sort by most recent
+    const posts = await Post.find().sort({ date: -1 });
+
+    sendSuccess(res, posts);
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
